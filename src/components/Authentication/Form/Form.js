@@ -1,9 +1,52 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-export default function Form() {
+import { ScrollView, View, Text, StyleSheet } from 'react-native'
+import { FormFields } from "../../../UI"
+
+
+const initialState = {
+    email: "",
+    password: "",
+    confirmPassword: ""
+};
+
+
+
+
+export default function Form({ isLogin }) {
+
+    let loginForm = [
+        {
+            label: "email",
+            type: "emailAddress"
+        },
+        {
+            label: "password",
+            type: "password"
+        }
+    ];
+
+    const [userCredentials, setUserCredentials] = React.useState(initialState);
+    const [isLoginActive, setLogin] = React.useState(isLogin);
+    function onChangeText() {
+
+    }
+    function RenderForm() {
+        if (!isLogin) {
+            loginForm = [
+                ...loginForm,
+                {
+                    label: "Confirm Password",
+                    type: "password"
+                }
+            ]
+        }
+
+        return <FormFields {...{ loginForm, onChangeText }} />
+
+    }
     return (
         <View style={styles.container}>
-            <Text>Form</Text>
+            <RenderForm />
         </View>
     )
 }
