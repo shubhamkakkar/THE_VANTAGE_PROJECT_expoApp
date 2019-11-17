@@ -1,5 +1,5 @@
 import React from "react"
-import { View, StyleSheet, Text } from "react-native"
+import { View, StyleSheet, ScrollView } from "react-native"
 import Constants from 'expo-constants'
 
 import { Heading, Form } from "../../../components/Authentication"
@@ -9,17 +9,17 @@ export default class Authentication extends React.PureComponent {
         const { navigation } = this.props
         const isLogin = navigation.getParam("isLogin")
         return (
-            <View style={styles.container}>
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
                 <Heading {...{ isLogin }} />
                 <Form {...{ isLogin }} />
-            </View>
+            </ScrollView>
         )
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         marginTop: Constants.statusBarHeight,
         backgroundColor: "#f5576c"
     }

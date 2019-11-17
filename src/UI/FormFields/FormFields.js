@@ -1,12 +1,12 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { ScrollView, KeyboardAvoidingView } from 'react-native'
 import FormField from "./FormField"
 export default function FormFields({ loginForm, onChange }) {
     return (
-        <View>
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
             {
                 loginForm.map(({ type, label }, key) => <FormField {...{ type, label, key, onChange }} />)
             }
-        </View>
+        </KeyboardAvoidingView>
     )
 }

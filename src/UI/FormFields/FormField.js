@@ -1,14 +1,14 @@
 import React from 'react'
-import { TextInput, View, StyleSheet, Text } from 'react-native'
+import { ScrollView, TextInput, View, StyleSheet, Text, } from 'react-native'
 
 
 export default function FormField({ type, label, onChange }) {
     return (
         <View style={classes.formItems}>
             <View style={classes.formLabel}>
-                <Text>
-                    {label.toUpperCase()} :
-                </Text>
+                <Text style={classes.formLabelText}>
+                    {label} :
+                    </Text>
             </View>
             <TextInput
                 style={classes.formInput}
@@ -16,17 +16,25 @@ export default function FormField({ type, label, onChange }) {
                 textContentType={type}
             />
         </View>
+
     )
 }
 
 const classes = StyleSheet.create({
     formItems: {
-
+        flexDirection: "row",
+        marginBottom: 5,
+        paddingVertical: 10,
     },
     formLabel: {
-
+        flex: 1,
+    },
+    formLabelText: {
+        textTransform: "capitalize"
     },
     formInput: {
+        flex: 2,
+        borderBottomWidth: 1,
 
     }
 })

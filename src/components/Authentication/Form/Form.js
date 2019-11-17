@@ -27,7 +27,7 @@ export default function Form({ isLogin }) {
 
     const [userCredentials, setUserCredentials] = React.useState(initialState);
     const [isLoginActive, setLogin] = React.useState(isLogin);
-    function onChangeText() {
+    function onChangeText({ text, label }) {
 
     }
     function RenderForm() {
@@ -41,7 +41,7 @@ export default function Form({ isLogin }) {
             ]
         }
 
-        return <FormFields {...{ loginForm, onChangeText }} />
+        return <FormFields {...{ loginForm, onChange: onChangeText }} />
 
     }
     return (
@@ -58,7 +58,8 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
-        padding: 20
+        padding: 20,
+        justifyContent: "center"
     }
 })
 
