@@ -1,6 +1,6 @@
 import React from 'react'
 import { ScrollView, View, Text, StyleSheet } from 'react-native'
-import { FormFields } from "../../../UI"
+import { FormFields, TouchableOpacityCustom } from "../../../UI"
 
 
 const initialState = {
@@ -10,7 +10,27 @@ const initialState = {
 };
 
 
+function buttonMaps(authentication) {
+    return [
+        {
+            title: "signup",
+            color: "white",
+            backgroundColor: "#f5576c"
+        },
+        {
+            title: "login",
+            color: "#f5576c",
+            backgroundColor: "white"
+        },
 
+    ].map(({ title, color, backgroundColor }, key) => <TouchableOpacityCustom  {...{
+        title,
+        key,
+        onPress: () => authentication({ key, title }),
+        touchableOpacityStyle: [styles.touchableOpacityStyle, { backgroundColor, borderColor: color }],
+        textStyle: [styles.textStyle, { color }]
+    }} />)
+}
 
 export default function Form({ isLogin }) {
 
@@ -30,8 +50,26 @@ export default function Form({ isLogin }) {
     function onChangeText({ text, label }) {
 
     }
+
+    function authenticationAction({ key, title }) {
+        if (isLoginActive) {
+            // in login
+            if (title === "signup") {
+                setLogin(false)
+            } else {
+                //login mutation
+            }
+        } else {
+            if (title === "signup") {
+                // signin mutation
+            } else {
+                setLogin(true)
+
+            }
+        }
+    }
     function RenderForm() {
-        if (!isLogin) {
+        if (!isLoginActive) {
             loginForm = [
                 ...loginForm,
                 {
@@ -44,9 +82,15 @@ export default function Form({ isLogin }) {
         return <FormFields {...{ loginForm, onChange: onChangeText }} />
 
     }
+
     return (
         <View style={styles.container}>
             <RenderForm />
+            <View style={styles.buttonContainer}>
+                {
+                    isLoginActive ? buttonMaps(authenticationAction) : buttonMaps(authenticationAction).reverse()
+                }
+            </View>
         </View>
     )
 }
@@ -58,8 +102,11 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
-        padding: 20,
-        justifyContent: "center"
+        paddingVertical: 20,
+        paddingHorizontal: 30
+    },
+    buttonContainer: {
+        flex: 1
     }
 })
 

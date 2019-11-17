@@ -13,10 +13,11 @@ const styles = StyleSheet.create({
     customStyleContainer: {
         padding: 10,
         borderRadius: 20,
-        borderWidth: 1
+        borderWidth: 1,
+        marginBottom: 5
 
     },
     customTextStyle: {
-
+        textAlign: "center"
     }
 });
