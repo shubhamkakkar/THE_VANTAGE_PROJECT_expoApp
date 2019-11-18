@@ -4,7 +4,7 @@ export default function Heading({ isLogin }) {
     return (
         <View style={styles.container}>
             <Text style={styles.headingText}>
-                {isLogin ? "Nice to see agian" : "Let's begin the journey"}
+                Hey! :-)
             </Text>
         </View>
     )

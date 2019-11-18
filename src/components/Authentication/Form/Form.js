@@ -1,96 +1,141 @@
 import React from 'react'
-import { ScrollView, View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet, TextInput } from 'react-native'
 import { FormFields, TouchableOpacityCustom } from "../../../UI"
-
-
-const initialState = {
-    email: "",
-    password: "",
-    confirmPassword: ""
-};
-
-
-function buttonMaps(authentication) {
-    return [
-        {
-            title: "signup",
-            color: "white",
-            backgroundColor: "#f5576c"
-        },
-        {
-            title: "login",
-            color: "#f5576c",
-            backgroundColor: "white"
-        },
-
-    ].map(({ title, color, backgroundColor }, key) => <TouchableOpacityCustom  {...{
-        title,
-        key,
-        onPress: () => authentication({ key, title }),
-        touchableOpacityStyle: [styles.touchableOpacityStyle, { backgroundColor, borderColor: color }],
-        textStyle: [styles.textStyle, { color }]
-    }} />)
-}
+import { useMutation } from "@apollo/react-hooks";
+import { LOGIN_MUTATION, SIGNIN_MUTATION } from "../../../gql/Authentication";
 
 export default function Form({ isLogin }) {
+    const [email, setEmail] = React.useState("")
+    const [password, setPassword] = React.useState("")
+    const [confirmPassword, setConfirmPassword] = React.useState("")
+    const [authenticationSignin] = useMutation(SIGNIN_MUTATION);
+    const [authenticationLogin] = useMutation(LOGIN_MUTATION);
 
     let loginForm = [
         {
             label: "email",
-            type: "emailAddress"
+            type: "emailAddress",
+            value: email,
+            onChangeFn: (value) => setEmail(value)
         },
         {
             label: "password",
-            type: "password"
+            type: "password",
+            value: password,
+            onChangeFn: (value) => setPassword(value)
         }
     ];
 
-    const [userCredentials, setUserCredentials] = React.useState(initialState);
-    const [isLoginActive, setLogin] = React.useState(isLogin);
-    function onChangeText({ text, label }) {
 
+    function loginAuthenticator({ email, password }) {
+        authenticationLogin({ variables: { email, password } })
+            .then(({ data: { login: { __typename, ...loginProps } } }) => {
+                console.log({ loginProps })
+            })
+            .catch(({ graphQLErrors }) => {
+                const { message } = graphQLErrors[0];
+                alert(message);
+                console.log({ message });
+            });
     }
 
-    function authenticationAction({ key, title }) {
-        if (isLoginActive) {
-            // in login
-            if (title === "signup") {
-                setLogin(false)
+    function signupAuthenticator({ email, password }) {
+        authenticationSignin({ variables: { email, password } })
+            .then(({ data: { signin: { __typename, ...signinProps } } }) =>
+                console.log({ signinProps })
+            )
+            .catch(({ graphQLErrors }) => {
+                const { message } = graphQLErrors[0];
+                alert(message);
+                console.log({ message });
+            });
+    }
+
+    function authenticationAction() {
+
+        if (email.trim().length && password.trim().length) {
+            if (isLogin) {
+                loginAuthenticator({ email, password });
             } else {
-                //login mutation
+                if (confirmPassword.trim().length) {
+                    if (password === confirmPassword) {
+                        signupAuthenticator({ email, password });
+                    } else {
+                        alert("Passwords did not match")
+                    }
+                } else {
+                    alert("fill in all the details")
+                }
             }
         } else {
-            if (title === "signup") {
-                // signin mutation
-            } else {
-                setLogin(true)
-
-            }
+            alert("fill in all the details")
         }
+
     }
-    function RenderForm() {
-        if (!isLoginActive) {
+
+    function renderForm() {
+        if (!isLogin) {
             loginForm = [
                 ...loginForm,
                 {
                     label: "Confirm Password",
-                    type: "password"
+                    type: "password",
+                    value: confirmPassword,
+                    onChangeFn: (value) => setConfirmPassword(value)
                 }
             ]
         }
 
-        return <FormFields {...{ loginForm, onChange: onChangeText }} />
+        return loginForm.map(({ label, onChangeFn, value, type }, key) => <TextInput
+            multiline={true}
+            onChangeText={(value) => onChangeFn(value)}
+            placeholder={label.toUpperCase()}
+            placeholderTextColor="black"
+            secureTextEntry={type === "password"}
+            {...{ value, key }}
+        />)
+    }
+
+    function RenderButton() {
+        const buttonAr = [
+            {
+                title: "signup",
+                color: "white",
+                backgroundColor: "#f5576c"
+            },
+            {
+                title: "login",
+                color: "white",
+                backgroundColor: "#f5576c"
+            },
+
+        ];
+
+        let selection = buttonAr[0];
+        if (isLogin) {
+            selection = buttonAr[1]
+        }
+        const { title, color, backgroundColor } = selection;
+        const MemorizedButton = React.memo(() => (
+            <View style={styles.buttonContainer}>
+                <TouchableOpacityCustom  {...{
+                    title,
+                    onPress: authenticationAction,
+                    touchableOpacityStyle: [styles.touchableOpacityStyle, { backgroundColor, borderColor: color }],
+                    textStyle: [styles.textStyle, { color }]
+                }} />
+            </View>
+        ), [isLogin])
+        return <MemorizedButton />
 
     }
 
     return (
         <View style={styles.container}>
-            <RenderForm />
-            <View style={styles.buttonContainer}>
-                {
-                    isLoginActive ? buttonMaps(authenticationAction) : buttonMaps(authenticationAction).reverse()
-                }
+            <View style={styles.formContainer}>
+                {renderForm()}
             </View>
+            <RenderButton />
         </View>
     )
 }
@@ -107,6 +152,10 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         flex: 1
+    },
+    formContainer: {
+        flex: 1
     }
 })
+
 
