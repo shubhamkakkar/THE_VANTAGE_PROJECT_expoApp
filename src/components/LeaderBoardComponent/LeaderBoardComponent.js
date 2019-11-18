@@ -19,11 +19,16 @@ function ScoreCard({userRank, score, recommendations}) {
 
     const recommendationArray = [...union(recommendations, recommendations)];
     return (
-        <View style={{flex: 1}}>
-            <Text> score: {score} </Text>
-            <Text> rank: {userRank} </Text>
+        <View style={{flex: 1, padding: 10}}>
+            <Text style={{marginBottom: 5, color: "red", fontSize: 18}}> Score: {score} </Text>
+            <Text style={{marginBottom: 5, color: "red", fontSize: 18}}> Predicted rank: {userRank} </Text>
+            <Text style={{textAlign: "center", marginBottom: 5, color: "red", fontSize: 18}}> Recommendations: </Text>
             {
-                recommendationArray.map(res => <Text>{res}</Text>)
+                recommendationArray.map((res, key) => (
+                    <View {...{key}} >
+                        <Text style={{marginBottom: 5}}>{res}</Text>
+                    </View>
+                ))
             }
         </View>
     )
@@ -45,8 +50,13 @@ function LeaderBoardComponent({recommendations, score, token}) {
 
     return (
         <LinearGradient style={{flex: 1, marginTop: Constants.statusBarHeight,}} colors={["#667eea", "#764ba2"]}>
-            <Heading title={"! Results !"} color={"white"}/>
-            <ScrollView style={styles.container} contentContainerStyle={{flexGrow: 1}}>
+            <View style={{flex: 1}}>
+                <Heading title={"! Results !"} color={"white"}/>
+            </View>
+            <ScrollView style={styles.container} contentContainerStyle={{
+                flexGrow: 1, paddingVertical: 20,
+                paddingHorizontal: 30
+            }}>
                 {
                     userRank.trim().length
                         ? <ScoreCard {...{userRank, score, recommendations}} />
@@ -64,8 +74,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
-        paddingVertical: 20,
-        paddingHorizontal: 30
+
     },
 });
 

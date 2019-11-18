@@ -1,61 +1,43 @@
 import React from "react";
-import { View, Image, Text, StyleSheet } from "react-native";
+import {View, Image, Text, StyleSheet} from "react-native";
 import Constants from 'expo-constants'
 import source from "../../../../assets/images/vantage-logo.png"
-import { TouchableOpacityCustom } from "../../../UI";
+import {TouchableOpacityCustom} from "../../../UI";
+import {AsyncStorage} from 'react-native';
+import {tokenAction} from "../../../store/actions";
+import {connect} from "react-redux"
 
-// export default function GettingStarted(props) {
+class GettingStarted extends React.PureComponent {
 
-//     function buttonAction({ index }) {
-//         if (index) {
-//             console.log("login")
-//         } else {
-//             console.log("signp")
-//         }
+    componentDidMount() {
+        AsyncStorage.getItem("TOKEN")
+            .then(value => {
+                if (value) {
+                    this.props.setToken(value)
+                    this.props.navigation.navigate("Home");
+                }
+            })
+            .catch(er => console.log(er))
+    }
 
-//         return (
-//             <View style={styles.container}>
-//                 <Image {...{ source }} style={[styles.image, { marginTop: Constants.statusBarHeight }]} />
-//                 <View style={styles.informationAndAction}>
-//                     <View style={styles.logoTextContainer}>
-//                         <Text>
-//                             THE VANTAGE PROJECT
-//                        </Text>
-//                     </View>
-//                     <View style={styles.buttons}>
-//                         {
-//                             [
-//                                 'login',
-//                                 'signup'
-//                             ].map((title, key) => <TouchableOpacityCustom {...{ title, key, onPress: () => buttonAction({ index }) }} />)
-//                         }
-//                     </View>
-//                 </View>
-//             </View>
-//         );
-//     }
-// }
-
-export default class GettingStarted extends React.PureComponent {
-
-    buttonAction = ({ key }) => {
-        const { navigation } = this.props
+    buttonAction = ({key}) => {
+        const {navigation} = this.props
         if (key) {
-            navigation.navigate("Authentication", { isLogin: true })
+            navigation.navigate("Authentication", {isLogin: true})
         } else {
-            navigation.navigate("Authentication", { isLogin: false })
+            navigation.navigate("Authentication", {isLogin: false})
         }
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Image {...{ source }} style={[styles.image, { marginTop: Constants.statusBarHeight }]} />
+                <Image {...{source}} style={[styles.image, {marginTop: Constants.statusBarHeight}]}/>
                 <View style={styles.informationAndAction}>
                     <View style={styles.logoTextContainer}>
                         <Text style={styles.logoText}>
                             THE VANTAGE PROJECT
-                       </Text>
+                        </Text>
                     </View>
                     <View style={styles.buttons}>
                         {
@@ -71,13 +53,16 @@ export default class GettingStarted extends React.PureComponent {
                                     backgroundColor: "white"
                                 },
 
-                            ].map(({ title, color, backgroundColor }, key) => <TouchableOpacityCustom
+                            ].map(({title, color, backgroundColor}, key) => <TouchableOpacityCustom
                                 {...{
                                     title,
                                     key,
-                                    onPress: () => this.buttonAction({ key }),
-                                    touchableOpacityStyle: [styles.touchableOpacityStyle, { backgroundColor, borderColor: color }],
-                                    textStyle: [styles.textStyle, { color }]
+                                    onPress: () => this.buttonAction({key}),
+                                    touchableOpacityStyle: [styles.touchableOpacityStyle, {
+                                        backgroundColor,
+                                        borderColor: color
+                                    }],
+                                    textStyle: [styles.textStyle, {color}]
                                 }} />)
                         }
                     </View>
@@ -86,6 +71,7 @@ export default class GettingStarted extends React.PureComponent {
         );
     }
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -116,11 +102,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
 
     },
-    touchableOpacityStyle: {
-
-    },
-    textStyle: {
-
-    }
+    touchableOpacityStyle: {},
+    textStyle: {}
 });
 
+
+const mapDispatchToProps = dispatch => ({
+    setToken: (token) => dispatch(tokenAction(token))
+});
+
+export default connect(null, mapDispatchToProps)(GettingStarted)

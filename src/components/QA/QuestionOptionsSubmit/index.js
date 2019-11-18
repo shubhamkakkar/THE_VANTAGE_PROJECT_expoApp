@@ -14,7 +14,8 @@ const s = {
         justifyContent: "center"
     },
     questionText: {
-        fontSize: 18
+        fontSize: 18,
+        color: "#0074D9"
     },
     answerContainer: {
         justifyContent: "center",
@@ -47,8 +48,8 @@ const s = {
 function Question({question}) {
     return (
         <View style={[s.container, {alignItems: "center", justifyContent: "center", marginBottom: 10}]}>
-            <Text style={[s.text, s.questionText,]}>
-                {question} ?
+            <Text style={[s.text, s.questionText, ]}>
+                Q) {question}
             </Text>
         </View>
     )
@@ -65,6 +66,7 @@ function Options({_id, fakingStateIndex, optionAction, options, setAnswer}) {
 
     return (
         <View style={{flex: 1, justifyContent: "center",}}>
+            <Text style={{ marginBottom: 20, color: "#0074D9" }}>Options: </Text>
             {
                 options.map((value, key) => (
                     <TouchableOpacity
