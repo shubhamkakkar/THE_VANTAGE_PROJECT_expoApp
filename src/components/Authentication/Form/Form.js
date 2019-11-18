@@ -37,6 +37,7 @@ function Form({ isLogin, setToken, ...rest }) {
                 rest.navigation.navigate("Home")
             })
             .catch(({ graphQLErrors }) => {
+                console.log({ graphQLErrors })
                 const { message } = graphQLErrors[0];
                 alert(message);
                 console.log({ message });

@@ -14,7 +14,8 @@ import configureStore from "./src/store"
 
 const cache = new InMemoryCache();
 const link = new HttpLink({
-    uri: 'https://backend-internship-task.herokuapp.com/'
+    // uri: 'https://backend-internship-task.herokuapp.com/'
+    uri: "http://192.168.29.84:4000"
 });
 
 

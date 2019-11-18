@@ -1,7 +1,8 @@
 import React from "react"
 import { Text, TouchableOpacity, View } from "react-native";
 import { TouchableOpacityCustom } from "../../../UI";
-
+import { EVALUATAION_QUERY, } from "../../../gql/QA"
+import { useQuery } from "@apollo/react-hooks"
 const s = {
     text: {
         color: "black",
@@ -53,13 +54,27 @@ function Question({ question }) {
 }
 
 function Options({ _id, answer, optionAction, options }) {
+
+    const { loading, data, error } = useQuery(EVALUATAION_QUERY, {
+        variables: {
+            _id,
+            statedAnswerIndex: 0
+        }
+    })
+
+
     return (
         <View style={{ flex: 1, justifyContent: "center", }}>
             {
                 options.map((value, key) => (
                     <TouchableOpacity
                         {...{ key }}
-                        onPress={() => optionAction({ _id, index: key })}
+                        onPress={() => {
+                            if (!loading && !error) {
+                                optionAction(data.evaluateQA, key)
+                            }
+
+                        }}
                         style={[key === answer ? s.answerContainerSelected : s.answerContainer]}>
                         <Text style={[s.text, s.answerText,]}>
                             {value}
