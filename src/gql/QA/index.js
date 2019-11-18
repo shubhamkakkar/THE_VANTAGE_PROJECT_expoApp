@@ -10,7 +10,7 @@ export const QA_QUERY = gql`
     }
 `;
 
-export const EVALUATAION_QUERY = gql`
+export const EVALUATION_QUERY = gql`
     query evaluateQA($_id: ID!, $statedAnswerIndex: Int!){
         evaluateQA(_id:$_id,statedAnswerIndex: $statedAnswerIndex){
             recommendation,

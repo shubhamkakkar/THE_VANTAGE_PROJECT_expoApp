@@ -1,11 +1,11 @@
 import React from "react";
 import {
     createStackNavigator,
-    createBottomTabNavigator,
 } from "react-navigation";
 
-import { GettingStarted, Authentication } from '../src/screens/SplashStack'
-import { Home, Test } from "../src/screens/TestStack"
+import {GettingStarted, Authentication} from '../src/screens/SplashStack'
+import {Home, Test, LeaderBoard} from "../src/screens/TestStack"
+
 export const SplashStack = createStackNavigator({
     GettingStarted,
     Authentication
@@ -17,7 +17,8 @@ export const SplashStack = createStackNavigator({
 
 export const TestStack = createStackNavigator({
     Home,
-    Test
+    Test,
+    LeaderBoard,
 }, {
     defaultNavigationOptions: {
         header: null

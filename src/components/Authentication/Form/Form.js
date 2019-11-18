@@ -75,7 +75,6 @@ function Form({ isLogin, setToken, ...rest }) {
         } else {
             alert("fill in all the details")
         }
-
     }
 
     function renderForm() {

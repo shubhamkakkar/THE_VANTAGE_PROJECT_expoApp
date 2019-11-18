@@ -1,57 +1,44 @@
 import React from 'react'
-import { View, Text } from 'react-native'
-import { connect } from 'react-redux'
-import { useQuery } from "@apollo/react-hooks"
-import { LinearGradient } from "expo-linear-gradient"
-import { Question, Options, Submit } from "./QuestionOptionsSubmit"
+import {View, Text} from 'react-native'
+import {connect} from 'react-redux'
+import {useQuery} from "@apollo/react-hooks"
+import {LinearGradient} from "expo-linear-gradient"
+import {Question, Options, Submit} from "./QuestionOptionsSubmit"
 import {
-    QA_QUERY,
-    EVALUATAION_QUERY,
-    RANK_PREDICTION_MUTATION
+    QA_QUERY
 } from "../../gql/QA"
-import { withNavigation } from 'react-navigation'
-
-
+import {withNavigation} from 'react-navigation'
 
 
 let fakingStateIndex = 0;
 
-function QAComponent({ token, navigation }) {
-    // const [activeQuestionIndex, setActiveQuestionIndex] = React.useState(0);
+function QAComponent({token, navigation}) {
     const [answer, setAnswer] = React.useState(-1);
     const [score, setScore] = React.useState(0);
-    const [recommendations, setRecommendations] = React.useState(() => new Set());
+    const [recommendations, setRecommendations] = React.useState(() => []);
 
-    const { loading: qaQueryLoading, error: qaQueryError, data: qaQueryData } = useQuery(QA_QUERY, {
-        variables: { token },
+    const {loading: qaQueryLoading, error: qaQueryError, data: qaQueryData} = useQuery(QA_QUERY, {
+        variables: {token},
     });
 
 
-    React.useEffect(() => {
-        console.log({ fakingStateIndex, score, recommendations })
-    }, [score])
-
-    function optionAction({ answerIndex, recommendation }, answer) {
+    function optionAction({answerIndex, recommendation}, answer) {
         const length = qaQueryData.QA.length - 1;
         if (fakingStateIndex < length) {
             let newScore = -1;
             if (answer === answerIndex) {
                 newScore = 4
             }
-            setRecommendations(({ recommendations }) => ({
-                recommendations: new Set(recommendations).add(recommendation)
-            }));
-            setScore((score + newScore))
+            setRecommendations([...recommendations, recommendation])
+            setScore((score + newScore));
             fakingStateIndex = fakingStateIndex + 1;
         }
 
+        if (fakingStateIndex === length) {
+            alert("The revision test is complete  !!");
+            navigation.navigate("LeaderBoard", {score: score * 180 / (length + 1), recommendations})
+        }
     }
-
-
-    function submitQuiz() {
-        navigation.navigate("LeaderBoard", { score })
-    }
-
 
     function renderQA() {
         if (!qaQueryLoading && !qaQueryError) {
@@ -62,17 +49,13 @@ function QAComponent({ token, navigation }) {
             } = qaQueryData.QA[fakingStateIndex];
 
             return (
-                <LinearGradient colors={["#fdfbfb", "#ebedee"]} style={{ flex: 1, padding: 20 }}>
-                    <Question  {...{ question }} />
-                    <Options {...{ _id, options, answer, optionAction }} />
-                    {
-                        fakingStateIndex === qaQueryData.QA.length - 1 && <Submit onPress={submitQuiz} title={"Submit Quiz!"} />
-
-                    }
+                <LinearGradient colors={["#fdfbfb", "#ebedee"]} style={{flex: 1, padding: 20}}>
+                    <Question  {...{question}} />
+                    <Options {...{_id, options, fakingStateIndex, setAnswer}} optionAction={optionAction}/>
                 </LinearGradient>
             )
         }
-        return <View />
+        return <View/>
     }
 
     return (
@@ -87,5 +70,6 @@ function QAComponent({ token, navigation }) {
     )
 }
 
-const mapStateToProps = ({ tokenReducer: token }) => ({ token })
+const mapStateToProps = ({tokenReducer: token}) => ({token})
 export default withNavigation(connect(mapStateToProps)(QAComponent))
+

@@ -1,8 +1,9 @@
 import React from "react"
-import { Text, TouchableOpacity, View } from "react-native";
-import { TouchableOpacityCustom } from "../../../UI";
-import { EVALUATAION_QUERY, } from "../../../gql/QA"
-import { useQuery } from "@apollo/react-hooks"
+import {Text, TouchableOpacity, View} from "react-native";
+import {TouchableOpacityCustom} from "../../../UI";
+import {EVALUATION_QUERY,} from "../../../gql/QA"
+import {useQuery} from "@apollo/react-hooks"
+
 const s = {
     text: {
         color: "black",
@@ -43,9 +44,9 @@ const s = {
     }
 };
 
-function Question({ question }) {
+function Question({question}) {
     return (
-        <View style={[s.container, { alignItems: "center", justifyContent: "center", marginBottom: 10 }]}>
+        <View style={[s.container, {alignItems: "center", justifyContent: "center", marginBottom: 10}]}>
             <Text style={[s.text, s.questionText,]}>
                 {question} ?
             </Text>
@@ -53,29 +54,30 @@ function Question({ question }) {
     )
 }
 
-function Options({ _id, answer, optionAction, options }) {
+function Options({_id, fakingStateIndex, optionAction, options, setAnswer}) {
 
-    const { loading, data, error } = useQuery(EVALUATAION_QUERY, {
+    const {loading, data, error} = useQuery(EVALUATION_QUERY, {
         variables: {
             _id,
             statedAnswerIndex: 0
         }
-    })
-
+    });
 
     return (
-        <View style={{ flex: 1, justifyContent: "center", }}>
+        <View style={{flex: 1, justifyContent: "center",}}>
             {
                 options.map((value, key) => (
                     <TouchableOpacity
-                        {...{ key }}
+                        {...{key}}
                         onPress={() => {
                             if (!loading && !error) {
                                 optionAction(data.evaluateQA, key)
+                            } else {
+                                console.log({loading, error})
                             }
 
                         }}
-                        style={[key === answer ? s.answerContainerSelected : s.answerContainer]}>
+                        style={[key === 0 ? s.answerContainerSelected : s.answerContainer]}>
                         <Text style={[s.text, s.answerText,]}>
                             {value}
                         </Text>
@@ -86,9 +88,14 @@ function Options({ _id, answer, optionAction, options }) {
     )
 }
 
-function Submit({ title, onPress }) {
-    return <View style={{ justifyContent: "center", alignItems: title === "Submit Quiz!" ? "center" : "flex-end" }}>
-        <TouchableOpacityCustom  {...{ onPress, title, touchableOpacityStyle: s.touchableOpacityStyle, textStyle: s.textStyle }} />
+function Submit({title, onPress}) {
+    return <View style={{justifyContent: "center", alignItems: title === "Submit Quiz!" ? "center" : "flex-end"}}>
+        <TouchableOpacityCustom  {...{
+            onPress,
+            title,
+            touchableOpacityStyle: s.touchableOpacityStyle,
+            textStyle: s.textStyle
+        }} />
     </View>
 }
 
