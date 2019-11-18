@@ -1,10 +1,10 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
-export default function Heading({ isLogin }) {
+export default function Heading({ title, color, fontWeight }) {
     return (
         <View style={styles.container}>
-            <Text style={styles.headingText}>
-                Hey! :-)
+            <Text style={[styles.headingText, { color, fontWeight }]}>
+                {title}
             </Text>
         </View>
     )
@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
     headingText: {
         fontWeight: "bold",
         fontSize: 22,
-        color: "white"
     }
 })
 

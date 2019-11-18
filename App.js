@@ -1,16 +1,16 @@
-import {AppLoading} from 'expo';
-import {Asset} from 'expo-asset';
+import { AppLoading } from 'expo';
+import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
-import React, {useState} from 'react';
-import {Platform, StatusBar, StyleSheet, View} from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
-
-import {ApolloClient} from 'apollo-client';
-import {ApolloProvider} from '@apollo/react-hooks';
+import React, { useState } from 'react';
+import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Provider } from "react-redux";
+import { ApolloClient } from 'apollo-client';
+import { ApolloProvider } from '@apollo/react-hooks';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 import AppNavigator from './navigation/AppNavigator';
-
+import configureStore from "./src/store"
 
 const cache = new InMemoryCache();
 const link = new HttpLink({
@@ -22,12 +22,23 @@ const client = new ApolloClient({
     cache,
     link
 });
+const store = configureStore()
+store.subscribe(() => {
+    const globalState = store.getState();
+    console.log({ globalState });
+});
 
 const AppApollo = () => (
-    <ApolloProvider {...{client}}>
-        <AppNavigator/>
+    <ApolloProvider {...{ client }}>
+        <AppNavigator />
     </ApolloProvider>
 );
+
+const AppRedux = () => (
+    <Provider {...{ store }}>
+        <AppApollo />
+    </Provider>
+)
 
 
 export default function App(props) {
@@ -43,8 +54,8 @@ export default function App(props) {
     } else {
         return (
             <View style={styles.container}>
-                {Platform.OS === 'ios' && <StatusBar barStyle="default"/>}
-                <AppApollo/>
+                {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+                <AppRedux />
             </View>
         );
     }

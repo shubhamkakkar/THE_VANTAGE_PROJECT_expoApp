@@ -1,6 +1,6 @@
 import TouchableOpacityCustom from "./TouchableOpacityCustom/TouchableOpacityCustom";
-import FormFields from "./FormFields/FormFields"
+import Heading from "./Heading/Heading"
 export {
     TouchableOpacityCustom,
-    FormFields
+    Heading
 }

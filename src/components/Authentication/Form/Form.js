@@ -1,10 +1,13 @@
 import React from 'react'
-import { View, StyleSheet, TextInput } from 'react-native'
-import { FormFields, TouchableOpacityCustom } from "../../../UI"
+import { View, StyleSheet, TextInput, Text } from 'react-native'
+import { connect } from "react-redux"
+import { withNavigation } from "react-navigation"
+import { TouchableOpacityCustom } from "../../../UI"
 import { useMutation } from "@apollo/react-hooks";
 import { LOGIN_MUTATION, SIGNIN_MUTATION } from "../../../gql/Authentication";
+import { tokenAction } from "../../../store/actions"
 
-export default function Form({ isLogin }) {
+function Form({ isLogin, setToken, ...rest }) {
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
     const [confirmPassword, setConfirmPassword] = React.useState("")
@@ -29,8 +32,9 @@ export default function Form({ isLogin }) {
 
     function loginAuthenticator({ email, password }) {
         authenticationLogin({ variables: { email, password } })
-            .then(({ data: { login: { __typename, ...loginProps } } }) => {
-                console.log({ loginProps })
+            .then(({ data: { login: { __typename, token } } }) => {
+                setToken(token)
+                rest.navigation.navigate("Home")
             })
             .catch(({ graphQLErrors }) => {
                 const { message } = graphQLErrors[0];
@@ -41,9 +45,10 @@ export default function Form({ isLogin }) {
 
     function signupAuthenticator({ email, password }) {
         authenticationSignin({ variables: { email, password } })
-            .then(({ data: { signin: { __typename, ...signinProps } } }) =>
-                console.log({ signinProps })
-            )
+            .then(({ data: { signin: { __typename, token } } }) => {
+                setToken(token)
+                rest.navigation.navigate("Home")
+            })
             .catch(({ graphQLErrors }) => {
                 const { message } = graphQLErrors[0];
                 alert(message);
@@ -52,7 +57,6 @@ export default function Form({ isLogin }) {
     }
 
     function authenticationAction() {
-
         if (email.trim().length && password.trim().length) {
             if (isLogin) {
                 loginAuthenticator({ email, password });
@@ -86,14 +90,25 @@ export default function Form({ isLogin }) {
             ]
         }
 
-        return loginForm.map(({ label, onChangeFn, value, type }, key) => <TextInput
-            multiline={true}
-            onChangeText={(value) => onChangeFn(value)}
-            placeholder={label.toUpperCase()}
-            placeholderTextColor="black"
-            secureTextEntry={type === "password"}
-            {...{ value, key }}
-        />)
+        return loginForm.map(({ label, onChangeFn, value, type }, key) => (
+            <View style={{ flexDirection: "row" }} {...{ key }}  >
+                <View style={{ flex: 1, justifyContent: "center" }}>
+                    <Text style={{ textTransform: "capitalize" }}>{label}</Text>
+                </View>
+
+                <TextInput
+                    multiline={true}
+                    onChangeText={(value) => onChangeFn(value)}
+                    placeholderTextColor="black"
+                    secureTextEntry={type === "password"}
+                    {...{ value, key }}
+                    style={{
+                        borderBottomWidth: 1,
+                        flex: 2
+                    }}
+                />
+            </View>
+        ))
     }
 
     function RenderButton() {
@@ -158,4 +173,9 @@ const styles = StyleSheet.create({
     }
 })
 
+const mapDispatchToProps = dispatch => ({
+    setToken: (token) => dispatch(tokenAction(token))
+});
 
+
+export default withNavigation(connect(null, mapDispatchToProps)(Form))
