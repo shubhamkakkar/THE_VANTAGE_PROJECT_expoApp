@@ -5,7 +5,7 @@ import {
 } from "react-navigation";
 
 import { GettingStarted, Authentication } from '../src/screens/SplashStack'
-import { Home } from "../src/screens/HomeStack"
+import { Home, Test } from "../src/screens/TestStack"
 export const SplashStack = createStackNavigator({
     GettingStarted,
     Authentication
@@ -15,8 +15,9 @@ export const SplashStack = createStackNavigator({
     }
 });
 
-export const HomeStack = createStackNavigator({
-    Home
+export const TestStack = createStackNavigator({
+    Home,
+    Test
 }, {
     defaultNavigationOptions: {
         header: null
